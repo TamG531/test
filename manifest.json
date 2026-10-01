@@ -1,7 +1,7 @@
 {
   "name": "UGC NET Geography",
   "short_name": "Classroom App",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#212529",
