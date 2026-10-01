@@ -6,8 +6,6 @@
     <title>Student Dashboard</title>
     <!-- Bootstrap for clean styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Plyr CSS for Video Cloaking -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <style>
         /* CRITICAL: Hide the dashboard content completely until Firebase confirms identity */
@@ -41,73 +39,42 @@
                 <!-- LEFT COLUMN: Video Player & PDF Viewer -->
                 <div class="col-md-8 mb-4">
                     
-         <!-- Notice the URL now says /videoseries?list= -->
-<div class="plyr__video-embed" id="player">
-    <iframe src="https://www.youtube.com/playlist?list=PLihBx7xIqR3PrYbGw9LZLHRk3zjjerwIi &amp;origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
-</div>
+                    <!-- Native YouTube Playlist -->
+                    <div class="ratio ratio-16x9 mb-4 shadow-sm">
+                        <iframe 
+                            src="https://www.youtube.com/embed/videoseries?list=PLihBx7xIqR3PrYbGw9LZLHRk3zjjerwIi" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
                     
-  <!-- Google Drive Folder Embed -->
-<div class="card p-4 shadow-sm border-0 mt-4">
-    <h4 class="mb-3">Study Materials Folder</h4>
-    
-    <div style="width: 100%; height: 500px; border: 1px solid #ddd; border-radius: 5px;">
-        <!-- Replace YOUR_FOLDER_ID with the ID you copied in Step 1 -->
-        <iframe 
-            src="https://drive.google.com/embeddedfolderview?id=YOUR_FOLDER_ID#list" 
-            width="100%" 
-            height="100%" 
-            style="border: none;">
-        </iframe>
-    </div>
-    
-</div>
-                
+                    <!-- Google Drive Folder Embed -->
+                    <div class="card p-4 shadow-sm border-0 mt-4">
+                        <h4 class="mb-3">Study Materials Folder</h4>
+                        
+                        <div style="width: 100%; height: 500px; border: 1px solid #ddd; border-radius: 5px;">
+                            <iframe 
+                                src="https://drive.google.com/embeddedfolderview?id=1fjV-M1ygBMA_z9obtI93aCfkETSO9jC3#list" 
+                                width="100%" 
+                                height="100%" 
+                                style="border: none;">
+                            </iframe>
+                        </div>
+                    </div>
 
+                </div>
+                
+                <!-- RIGHT COLUMN: Action Panel -->
+                <div class="col-md-4">
                     <!-- Study Materials Panel -->
                     <div class="card p-4 shadow-sm border-0">
                         <h4 class="mb-3">Practice & Test</h4>
                         <!-- Link this to your NTA mock test HTML file -->
                         <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take NTA Mock Test</a>
                     </div>
-
                 </div>
             </div>
         </div>
     </div> <!-- Closes the protected-content div -->
-
-<!-- Plyr JS & Playlist Logic -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script>
-        // Initialize the cloaked video player
-        const player = new Plyr('#player');
-
-        // Logic to make the playlist buttons change the video
-        const videoButtons = document.querySelectorAll('.video-btn');
-
-        videoButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove red active color from all buttons
-                videoButtons.forEach(btn => btn.classList.remove('active', 'bg-danger', 'text-white'));
-                
-                // Add red active color to clicked button
-                this.classList.add('active', 'bg-danger', 'text-white');
-                
-                // Get YouTube ID
-                const videoId = this.getAttribute('data-vid');
-                
-                // CORRECT WAY TO CHANGE VIDEOS IN PLYR
-                player.source = {
-                    type: 'video',
-                    sources: [
-                        {
-                            src: videoId,
-                            provider: 'youtube',
-                        },
-                    ],
-                };
-            });
-        });
-    </script>
 
     <!-- Single Firebase Security Logic Block -->
     <script type="module">
