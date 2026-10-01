@@ -106,24 +106,63 @@ const firebaseConfig = {
             });
         });
 
-        <!-- Secure PDF Viewer -->
-<div class="card p-4 shadow-sm border-0 mb-4">
-    <h4 class="mb-3">Chapter 1: Geography Notes</h4>
-    
-    <!-- This wrapper cuts off the top 50px of the iframe -->
-    <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
-        
-        <!-- Notice the iframe is pushed UP by 50px using margin-top -->
-        <iframe 
-            src="https://drive.google.com/file/d/YOUR_FILE_ID_HERE/preview" 
-            width="100%" 
-            height="550px" 
-            style="border: none; position: absolute; top: -50px; left: 0;"
-            allow="autoplay">
-        </iframe>
-        
-    </div>
-</div>
+<!-- Secure PDF Viewer (MOVED HERE, OUTSIDE THE SCRIPT) -->
+        <div class="card p-4 shadow-sm border-0 mb-4">
+            <h4 class="mb-3">Chapter 1: Geography Notes</h4>
+            <!-- This wrapper cuts off the top 50px of the iframe -->
+            <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
+                <iframe 
+                    src="https://drive.google.com/file/d/YOUR_FILE_ID_HERE/preview" 
+                    width="100%" 
+                    height="550px" 
+                    style="border: none; position: absolute; top: -50px; left: 0;"
+                    allow="autoplay">
+                </iframe>
+            </div>
+        </div>
+    </div> <!-- Closes the protected-content div -->
+
+    <!-- Plyr JS to run the video cloaking -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        const player = new Plyr('#player');
+    </script>
+
+    <!-- Firebase Security Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
+          authDomain: "coaching-portal-ugcnet.firebaseapp.com",
+          projectId: "coaching-portal-ugcnet",
+          storageBucket: "coaching-portal-ugcnet.firebasestorage.app",
+          messagingSenderId: "972456665369",
+          appId: "1:972456665369:web:90ec17b9d3d75887ef2588",
+          measurementId: "G-2PEYHGZ6QL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Security Check: Is the user logged in?
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('protected-content').style.display = 'block';
+                document.getElementById('user-email').innerText = user.email;
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // Log Out Button Logic
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            });
+        });
     </script>
 </body>
 </html>
