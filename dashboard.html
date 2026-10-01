@@ -99,7 +99,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Your Firebase Keys
+        // 1. YOUR FIREBASE KEYS
         const firebaseConfig = {
           apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
           authDomain: "coaching-portal-ugcnet.firebaseapp.com",
@@ -113,18 +113,39 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Security Check
+        // 2. PASTE YOUR LOGIN GOOGLE APPS SCRIPT URL HERE
+        const googleSheetApiUrl = "https://script.google.com/macros/s/AKfycbxcq8R_xv6IJNT3m_b_k5iT6oOQzb8g-e2SRO0UZyYUXTTnCxXeyTwtqR1ltYeF3bos/exec";
+
+        // Security Check: Is the user logged in AND on the spreadsheet?
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('protected-content').style.display = 'block';
-                document.getElementById('user-email').innerText = user.email;
+                // User is logged into Firebase, now double-check the database
+                fetch(googleSheetApiUrl + "?email=" + encodeURIComponent(user.email))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.approved) {
+                            // VERIFIED: Hide spinner, show content
+                            document.getElementById('loading-screen').style.display = 'none';
+                            document.getElementById('protected-content').style.display = 'block';
+                            document.getElementById('user-email').innerText = user.email;
+                        } else {
+                            // REJECTED: Email was removed from sheet. Force sign out.
+                            signOut(auth).then(() => {
+                                window.location.href = "index.html";
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Database check failed:", err);
+                        alert("Error verifying your account status.");
+                    });
             } else {
-                window.location.href = "index.html"; // Redirect to login
+                // Not logged in at all
+                window.location.href = "index.html";
             }
         });
 
-        // Log Out Button
+        // Log Out Button Logic
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "index.html";
