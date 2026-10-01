@@ -18,29 +18,31 @@
 </head>
 <body class="bg-light">
 
-<!-- The Loading Screen -->
-<div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
-  <div class="spinner-border text-primary" role="status">
+<!-- Mini Loading Container -->
+<div id="loading-screen" class="d-flex justify-content-center align-items-center rounded shadow" 
+     style="width: 100px; height: 100px; background: rgba(255,255,255,0.9); position: fixed; top: 20px; right: 20px; z-index: 9999; transition: opacity 0.5s ease;">
+  
+  <!-- Smaller Bootstrap Spinner using .spinner-border-sm -->
+  <div class="spinner-border spinner-border-sm text-primary" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>
 </div>
 
-<!-- JavaScript to hide the spinner -->
+<!-- JavaScript to fade and disappear -->
 <script>
-  // Wait for the window to load, then start the timer
   window.addEventListener('load', () => {
     setTimeout(() => {
       const loader = document.getElementById('loading-screen');
       
-      // Option A: Hide it instantly using Bootstrap's display-none class
-      loader.classList.add('d-none');
+      // Step 1: Smoothly fade it out using CSS transitions
+      loader.style.opacity = '0';
       
-      // Option B (Alternative): Smooth fade out if you prefer
-      // loader.style.transition = 'opacity 0.5s ease';
-      // loader.style.opacity = '0';
-      // setTimeout(() => loader.classList.add('d-none'), 500);
+      // Step 2: Completely remove it from the page layout after it finishes fading
+      setTimeout(() => {
+        loader.classList.add('d-none');
+      }, 500); // Matches the 0.5s transition time
       
-    }, 2000); // 2000 milliseconds = 2 seconds
+    }, 2000); // Keeps it visible for 2 seconds
   });
 </script>
 
