@@ -26,9 +26,10 @@ document.getElementById('google-login-btn').addEventListener('click', () => {
             console.log("Logged in as: ", user.displayName);
             // Redirect to the protected dashboard
             window.location.href = "dashboard.html"; 
-        }).catch((error) => {
-            console.error("Error signing in: ", error.message);
-            alert("Login failed. Please try again.");
+}).catch((error) => {
+            console.error("Error signing in: ", error);
+            // This will now pop up the EXACT reason Firebase is mad
+            alert("Firebase Error: " + error.code + "\n\nMessage: " + error.message);
         });
 });
 
