@@ -41,44 +41,27 @@
                 <!-- LEFT COLUMN: Video Player & PDF Viewer -->
                 <div class="col-md-8 mb-4">
                     
-                    <!-- Cloaked YouTube Video Player -->
-                    <div class="plyr__video-embed" id="player">
-                        <iframe id="main-video-frame" src="https://www.youtube.com/embed/4LDo9I6IQes?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
-                    </div>
-
-                    <!-- Secure PDF Viewer -->
-                    <div class="card p-4 shadow-sm border-0 mt-4">
-                        <h4 class="mb-3">Chapter Notes</h4>
-                        <!-- This wrapper cuts off the top 50px of the iframe to hide the pop-out button -->
-                        <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
-                            <!-- TODO: Replace the src with your actual PDF FILE link -->
-                            <iframe 
-                                src="https://drive.google.com/drive/folders/1fjV-M1ygBMA_z9obtI93aCfkETSO9jC3?usp=drive_link/preview" 
-                                width="100%" 
-                                height="550px" 
-                                style="border: none; position: absolute; top: -50px; left: 0;"
-                                allow="autoplay">
-                            </iframe>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- RIGHT COLUMN: Playlist & Action Panel -->
-                <div class="col-md-4">
+         <!-- Notice the URL now says /videoseries?list= -->
+<div class="plyr__video-embed" id="player">
+    <iframe src="https://www.youtube.com/embed/videoseries?list=PLihBx7xIqR3PrYbGw9LZLHRk3zjjerwIi&amp;origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
+</div>
                     
-                    <!-- VIDEO PLAYLIST MENU -->
-                    <div class="card shadow-sm border-0 mb-4">
-                        <div class="card-header bg-danger text-white">
-                            <h5 class="mb-0">Class Recordings</h5>
-                        </div>
-                        <div class="list-group list-group-flush" id="video-playlist">
-                            <!-- Notice the data-vid attribute holds the 11-character YouTube ID -->
-                            <button class="list-group-item list-group-item-action active video-btn" data-vid="HP15Zr8Ysso">1. PYQ Oceanography</button>
-                            <button class="list-group-item list-group-item-action video-btn" data-vid="dQw4w9WgXcQ">Class 2: Geomorphology</button>
-                            <button class="list-group-item list-group-item-action video-btn" data-vid="jNQXAC9IVRw">Class 3: Climatology</button>
-                        </div>
-                    </div>
+  <!-- Google Drive Folder Embed -->
+<div class="card p-4 shadow-sm border-0 mt-4">
+    <h4 class="mb-3">Study Materials Folder</h4>
+    
+    <div style="width: 100%; height: 500px; border: 1px solid #ddd; border-radius: 5px;">
+        <!-- Replace YOUR_FOLDER_ID with the ID you copied in Step 1 -->
+        <iframe 
+            src="https://drive.google.com/embeddedfolderview?id=YOUR_FOLDER_ID#list" 
+            width="100%" 
+            height="100%" 
+            style="border: none;">
+        </iframe>
+    </div>
+    
+</div>
+                
 
                     <!-- Study Materials Panel -->
                     <div class="card p-4 shadow-sm border-0">
@@ -92,7 +75,7 @@
         </div>
     </div> <!-- Closes the protected-content div -->
 
-    <!-- Plyr JS & Playlist Logic -->
+<!-- Plyr JS & Playlist Logic -->
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     <script>
         // Initialize the cloaked video player
@@ -100,17 +83,28 @@
 
         // Logic to make the playlist buttons change the video
         const videoButtons = document.querySelectorAll('.video-btn');
-        const videoFrame = document.getElementById('main-video-frame');
 
         videoButtons.forEach(button => {
             button.addEventListener('click', function() {
                 // Remove red active color from all buttons
                 videoButtons.forEach(btn => btn.classList.remove('active', 'bg-danger', 'text-white'));
+                
                 // Add red active color to clicked button
                 this.classList.add('active', 'bg-danger', 'text-white');
-                // Get YouTube ID and swap video
+                
+                // Get YouTube ID
                 const videoId = this.getAttribute('data-vid');
-                videoFrame.src = `https://www.youtube.com/embed/${videoId}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1`;
+                
+                // CORRECT WAY TO CHANGE VIDEOS IN PLYR
+                player.source = {
+                    type: 'video',
+                    sources: [
+                        {
+                            src: videoId,
+                            provider: 'youtube',
+                        },
+                    ],
+                };
             });
         });
     </script>
