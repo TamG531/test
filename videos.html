@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Lectures</title>
-    <!-- Bootstrap for clean styling -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Plyr CSS for Video Cloaking -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <style>
-        /* CRITICAL: Hide the content completely until Firebase confirms identity */
+        /* Hide content until Firebase confirms identity */
         #protected-content { display: none; }
+        .video-btn { cursor: pointer; }
     </style>
 </head>
 <body class="bg-light">
-
-    <!-- Loading Spinner -->
-    <div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
-        <div class="spinner-border text-danger" role="status"></div>
-    </div>
 
     <!-- Protected Content -->
     <div id="protected-content">
@@ -34,32 +32,67 @@
         </nav>
 
         <div class="container mt-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <h2 class="mb-4">Class Recordings Playlist</h2>
-                    
-                    <!-- Native YouTube Playlist -->
-                    <div class="card p-3 shadow-sm border-0">
-                        <div class="ratio ratio-16x9">
-                            <!-- Your Playlist ID is already injected here -->
-                            <iframe 
-                                src="https://www.youtube.com/embed/videoseries?list=PLihBx7xIqR3PrYbGw9LZLHRk3zjjerwIi" 
-                                allowfullscreen>
-                            </iframe>
+            <div class="row">
+                <!-- LEFT: Secure Cloaked Video Player -->
+                <div class="col-lg-8 mb-4">
+                    <div class="plyr__video-embed" id="player">
+                        <!-- Default video that loads first (Replace VIDEO_ID_1) -->
+                        <iframe 
+                            src="https://www.youtube.com/embed/4LDo9I6IQes?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" 
+                            allowfullscreen allowtransparency allow="autoplay">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Custom Playlist Buttons -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">Class Recordings</h5>
+                        </div>
+                        <div class="list-group list-group-flush" id="video-playlist">
+                            <!-- Replace the data-vid attributes with your 11-character YouTube IDs -->
+                            <button class="list-group-item list-group-item-action active video-btn" data-vid="4LDo9I6IQes">Class 1: Geomorphology</button>
+                            <button class="list-group-item list-group-item-action video-btn" data-vid="HP15Zr8Ysso">Class 2: Geomorphology</button>
+                            <button class="list-group-item list-group-item-action video-btn" data-vid="eDwCFqDvar8">Class 3: Cultural</button>
+                            <button class="list-group-item list-group-item-action video-btn" data-vid="xYdMGISwCGc">Class 3: Social</button>
+                            <!-- Add more buttons as needed -->
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Plyr JS & Playlist Logic -->
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        const player = new Plyr('#player');
+        const videoButtons = document.querySelectorAll('.video-btn');
+
+        videoButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active styling from all buttons
+                videoButtons.forEach(btn => btn.classList.remove('active', 'bg-danger', 'text-white'));
+                
+                // Add active styling to clicked button
+                this.classList.add('active', 'bg-danger', 'text-white');
+                
+                // Get YouTube ID and securely update the player
+                const videoId = this.getAttribute('data-vid');
+                player.source = {
+                    type: 'video',
+                    sources: [{ src: videoId, provider: 'youtube' }]
+                };
+            });
+        });
+    </script>
 
     <!-- Firebase Security Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Your Firebase Keys
         const firebaseConfig = {
           apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
           authDomain: "coaching-portal-ugcnet.firebaseapp.com",
@@ -73,18 +106,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Security Check: Is the user logged in?
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('protected-content').style.display = 'block';
                 document.getElementById('user-email').innerText = user.email;
             } else {
-                window.location.href = "index.html"; // Redirect to login
+                window.location.href = "index.html";
             }
         });
 
-        // Log Out Button Logic
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "index.html";
