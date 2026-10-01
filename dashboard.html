@@ -37,21 +37,47 @@
             <h2>Today's Class</h2>
             <hr>
             
-            <div class="row mt-4">
-                <!-- Cloaked YouTube Video -->
+<div class="row mt-4">
+                <!-- Cloaked YouTube Video Player -->
                 <div class="col-md-8 mb-4">
                     <div class="plyr__video-embed" id="player">
-                        <!-- Replace "bTqVqk7FSmY" with your unlisted YouTube video ID -->
-                        <iframe src="https://www.youtube.com/embed/bTqVqk7FSmY?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
+                        <!-- The default video that loads first -->
+                        <iframe id="main-video-frame" src="https://www.youtube.com/embed/bTqVqk7FSmY?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
                     </div>
                 </div>
+                
+                <!-- Video Playlist & Action Panel -->
+                <div class="col-md-4">
+                    
+                    <!-- VIDEO PLAYLIST MENU -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">Class Recordings</h5>
+                        </div>
+                        <!-- THIS IS WHERE YOU ADD OR CHANGE VIDEOS -->
+                        <div class="list-group list-group-flush" id="video-playlist">
+                            <!-- Notice the data-vid attribute holds the 11-character YouTube ID -->
+                            <button class="list-group-item list-group-item-action active video-btn" data-vid="bTqVqk7FSmY">Class 1: Intro to Geography</button>
+                            <button class="list-group-item list-group-item-action video-btn" data-vid="dQw4w9WgXcQ">Class 2: Geomorphology</button>
+                            <button class="list-group-item list-group-item-action video-btn" data-vid="jNQXAC9IVRw">Class 3: Climatology</button>
+                        </div>
+                    </div>
+
+                    <!-- Study Materials Panel -->
+                    <div class="card p-4 shadow-sm border-0">
+                        <h4 class="mb-3">Study Materials</h4>
+                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take NTA Mock Test</a>
+                        <a href="#" target="_blank" class="btn btn-outline-dark w-100 py-2">View PDF Notes</a>
+                    </div>
+                </div>
+            </div>
                 
                 <!-- Action Panel -->
                 <div class="col-md-4">
                     <div class="card p-4 shadow-sm border-0">
                         <h4 class="mb-3">Study Materials</h4>
                         <!-- Link this to your NTA mock test HTML file -->
-                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take NTA Mock Test</a>
+                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take Mock Test</a>
                         
                         <!-- Link this to your Google Drive PDF preview -->
                         <a href="#" target="_blank" class="btn btn-outline-dark w-100 py-2">View PDF Notes</a>
@@ -112,7 +138,7 @@ const firebaseConfig = {
             <!-- This wrapper cuts off the top 50px of the iframe -->
             <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
                 <iframe 
-                    src="https://drive.google.com/file/d/YOUR_FILE_ID_HERE/preview" 
+                    src="https://drive.google.com/drive/folders/1fjV-M1ygBMA_z9obtI93aCfkETSO9jC3?usp=sharing/preview" 
                     width="100%" 
                     height="550px" 
                     style="border: none; position: absolute; top: -50px; left: 0;"
