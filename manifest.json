@@ -1,6 +1,6 @@
 {
-  "name": "UGC NET Coaching Portal",
-  "short_name": "Coaching App",
+  "name": "UGC NET Geography",
+  "short_name": "Classroom App",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#f8f9fa",
