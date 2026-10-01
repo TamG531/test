@@ -1,107 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <!-- 1. PASTE YOUR ORIGINAL <head> TAGS, CSS LINKS, AND <title> HERE -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTA Mock Test</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-        /* CRITICAL SECURITY: Hide the exam completely until Firebase verifies identity */
-        #all { display: none; }
-        #auth-loading { height: 100vh; display: flex; justify-content: center; align-items: center; font-size: 20px; font-family: sans-serif; }
+        /* Hide content until Firebase confirms identity */
+        #protected-content { display: none; }
+        
+        /* Clean styling for test questions */
+        .question-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 20px; }
+        .form-check-label { cursor: pointer; }
     </style>
 </head>
-<body>
-    <!-- Loading Screen -->
-    <div id="auth-loading">Verifying secure session...</div>
+<body class="bg-light">
 
-    <!-- The wrapper for your entire NTA exam -->
-    <div id="all">
-        <!-- 
-          2. PASTE YOUR ENTIRE ORIGINAL EXAM HTML HERE 
-          (Everything from your original <div class="top-bar"> down to the </div> closing #all)
-        -->
+    <!-- Loading Spinner -->
+    <div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
+        <div class="spinner-border text-success" role="status"></div>
     </div>
 
-    <!-- 3. PASTE YOUR ORIGINAL JAVASCRIPT LINKS HERE (jQuery, Bootstrap, Begin.js, etc.) -->
+    <!-- Protected Content -->
+    <div id="protected-content">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-dark bg-dark px-4 shadow-sm">
+            <div>
+                <a class="navbar-brand fw-bold" href="dashboard.html">Coaching Portal</a>
+                <a href="dashboard.html" class="btn btn-sm btn-outline-light ms-3">← Back to Dashboard</a>
+            </div>
+            <div class="d-flex align-items-center">
+                <span id="user-email-display" class="text-white me-3"></span>
+                <button id="logout-btn" class="btn btn-outline-danger btn-sm">Log Out</button>
+            </div>
+        </nav>
 
-    <!-- 4. ADD FIREBASE SECURITY & GOOGLE SHEETS SUBMISSION LOGIC -->
+        <div class="container mt-5 mb-5" style="max-width: 800px;">
+            <h2 class="mb-4">Geography Mock Test 1</h2>
+            
+            <form id="mock-test-form">
+                
+                <!-- Student Details Panel -->
+                <div class="card p-4 mb-4 shadow-sm border-0">
+                    <h5 class="mb-3 text-success">Student Details</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <input type="text" class="form-control" id="candidate-name" required placeholder="Enter your full name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Registered Email (Auto-filled)</label>
+                        <!-- This field is read-only so students cannot submit under another name -->
+                        <input type="email" class="form-control bg-light" id="student-email" readonly>
+                    </div>
+                </div>
+
+                <!-- Questions Panel -->
+                <div class="card p-4 shadow-sm border-0 mb-4">
+                    <h5 class="mb-4 text-success">Test Questions</h5>
+                    
+                    <!-- Question 1 -->
+                    <div class="question-card">
+                        <p class="fw-bold">1. Which of the following is a primary greenhouse gas?</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q1" value="Oxygen" required>
+                            <label class="form-check-label">Oxygen</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q1" value="Carbon Dioxide">
+                            <label class="form-check-label">Carbon Dioxide</label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="question-card">
+                        <p class="fw-bold">2. The term "Geomorphology" refers to the study of:</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q2" value="Oceans" required>
+                            <label class="form-check-label">Oceans</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q2" value="Landforms">
+                            <label class="form-check-label">Landforms</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Add more questions here using the same format -->
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm" id="submit-btn">Submit Test & View Score</button>
+            </form>
+
+            <!-- Result Display (Hidden initially) -->
+            <div id="result-display" class="card mt-4 p-4 border-0 shadow-sm bg-success text-white text-center" style="display: none;">
+                <h3 class="mb-3">Test Submitted Successfully!</h3>
+                <h4 id="score-text"></h4>
+                <a href="dashboard.html" class="btn btn-light mt-3">Return to Dashboard</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Firebase Security Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // TODO: PASTE YOUR FIREBASE CONFIG KEYS HERE
-const firebaseConfig = {
-  apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
-  authDomain: "coaching-portal-ugcnet.firebaseapp.com",
-  projectId: "coaching-portal-ugcnet",
-  storageBucket: "coaching-portal-ugcnet.firebasestorage.app",
-  messagingSenderId: "972456665369",
-  appId: "1:972456665369:web:90ec17b9d3d75887ef2588",
-  measurementId: "G-2PEYHGZ6QL"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
+          authDomain: "coaching-portal-ugcnet.firebaseapp.com",
+          projectId: "coaching-portal-ugcnet",
+          storageBucket: "coaching-portal-ugcnet.firebasestorage.app",
+          messagingSenderId: "972456665369",
+          appId: "1:972456665369:web:90ec17b9d3d75887ef2588",
+          measurementId: "G-2PEYHGZ6QL"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        let currentUserEmail = "";
-        let currentUserName = "";
 
-        // Security Check: Is the user logged in?
+        // TODO: PASTE YOUR *LOGIN* GOOGLE APPS SCRIPT URL HERE
+        const loginDatabaseUrl = "https://script.google.com/macros/s/AKfycbxcq8R_xv6IJNT3m_b_k5iT6oOQzb8g-e2SRO0UZyYUXTTnCxXeyTwtqR1ltYeF3bos/exec";
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // VERIFIED: Show the exam, hide the loading screen
-                document.getElementById('auth-loading').style.display = 'none';
-                document.getElementById('all').style.display = 'block';
-                
-                // Store user details for the final submission
-                currentUserEmail = user.email;
-                currentUserName = user.displayName || "Student";
-
-                // INJECT NAME INTO UI: Find your name placeholder and update it
-                // Make sure your HTML has id="candidate-name" added to the span: 
-                // <span id="candidate-name" style="color: #f7931e;">[Your Name]</span>
-                const namePlaceholder = document.getElementById('candidate-name');
-                if(namePlaceholder) namePlaceholder.innerText = currentUserName;
-                
+                fetch(loginDatabaseUrl + "?email=" + encodeURIComponent(user.email))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.approved) {
+                            document.getElementById('loading-screen').style.display = 'none';
+                            document.getElementById('protected-content').style.display = 'block';
+                            
+                            // Displays email in Navbar
+                            document.getElementById('user-email-display').innerText = user.email;
+                            
+                            // CRITICAL: Auto-fills the hidden test form with their verified email
+                            document.getElementById('student-email').value = user.email;
+                        } else {
+                            signOut(auth).then(() => { window.location.href = "index.html"; });
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Database check failed:", err);
+                        alert("Error verifying your account status.");
+                    });
             } else {
-                // REJECTED: Redirect immediately to login page
                 window.location.href = "index.html";
             }
         });
 
-        // ---------------------------------------------------------
-        // SUBMIT TO GOOGLE SHEETS LOGIC
-        // ---------------------------------------------------------
-        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL'; // From Step 3 of the Apps Script guide
-
-        // Listen for clicks on your final "Submit" button
-        document.querySelector('.btn-submit-all-answers').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Gather the scores generated by your existing JavaScript
-            // (Ensure these IDs match what your Begin.js actually outputs)
-            let totalScore = document.getElementById('lblRScore').innerText; 
-            let correctAnswers = document.getElementById('lblRTotalCorrect').innerText;
-            let wrongAnswers = document.getElementById('lblRTotalWrong').innerText;
-            
-            // Package the data. The keys must perfectly match your Google Sheet Column Headers
-            const formData = new FormData();
-            formData.append('Candidate Name', currentUserName);
-            formData.append('Email', currentUserEmail);
-            formData.append('Total Score', totalScore);
-            formData.append('Correct Answers', correctAnswers);
-            formData.append('Incorrect Answers', wrongAnswers);
-            
-            // Send to Google Sheets
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    // Reveal your Thank You screen (using your existing classes)
-                    document.querySelector('.exam-paper').style.display = 'none';
-                    document.querySelector('.exam-thankyou').style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error!', error.message);
-                    alert("Submission failed. Please try again.");
-                });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = "index.html"; });
         });
     </script>
+    
+    <!-- SUBMISSION LOGIC WILL GO HERE -->
+
 </body>
 </html>
