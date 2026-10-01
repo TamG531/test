@@ -37,16 +37,34 @@
             <h2>Today's Class</h2>
             <hr>
             
-<div class="row mt-4">
-                <!-- Cloaked YouTube Video Player -->
+            <div class="row mt-4">
+                <!-- LEFT COLUMN: Video Player & PDF Viewer -->
                 <div class="col-md-8 mb-4">
+                    
+                    <!-- Cloaked YouTube Video Player -->
                     <div class="plyr__video-embed" id="player">
-                        <!-- The default video that loads first -->
                         <iframe id="main-video-frame" src="https://www.youtube.com/embed/bTqVqk7FSmY?origin=https://plyr.io&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
                     </div>
+
+                    <!-- Secure PDF Viewer -->
+                    <div class="card p-4 shadow-sm border-0 mt-4">
+                        <h4 class="mb-3">Chapter Notes</h4>
+                        <!-- This wrapper cuts off the top 50px of the iframe to hide the pop-out button -->
+                        <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
+                            <!-- TODO: Replace the src with your actual PDF FILE link -->
+                            <iframe 
+                                src="https://drive.google.com/file/d/YOUR_FILE_ID/preview" 
+                                width="100%" 
+                                height="550px" 
+                                style="border: none; position: absolute; top: -50px; left: 0;"
+                                allow="autoplay">
+                            </iframe>
+                        </div>
+                    </div>
+
                 </div>
                 
-                <!-- Video Playlist & Action Panel -->
+                <!-- RIGHT COLUMN: Playlist & Action Panel -->
                 <div class="col-md-4">
                     
                     <!-- VIDEO PLAYLIST MENU -->
@@ -54,7 +72,6 @@
                         <div class="card-header bg-danger text-white">
                             <h5 class="mb-0">Class Recordings</h5>
                         </div>
-                        <!-- THIS IS WHERE YOU ADD OR CHANGE VIDEOS -->
                         <div class="list-group list-group-flush" id="video-playlist">
                             <!-- Notice the data-vid attribute holds the 11-character YouTube ID -->
                             <button class="list-group-item list-group-item-action active video-btn" data-vid="bTqVqk7FSmY">Class 1: Intro to Geography</button>
@@ -65,121 +82,45 @@
 
                     <!-- Study Materials Panel -->
                     <div class="card p-4 shadow-sm border-0">
-                        <h4 class="mb-3">Study Materials</h4>
-                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take NTA Mock Test</a>
-                        <a href="#" target="_blank" class="btn btn-outline-dark w-100 py-2">View PDF Notes</a>
-                    </div>
-                </div>
-            </div>
-                
-                <!-- Action Panel -->
-                <div class="col-md-4">
-                    <div class="card p-4 shadow-sm border-0">
-                        <h4 class="mb-3">Study Materials</h4>
+                        <h4 class="mb-3">Practice & Test</h4>
                         <!-- Link this to your NTA mock test HTML file -->
-                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take Mock Test</a>
-                        
-                        <!-- Link this to your Google Drive PDF preview -->
-                        <a href="#" target="_blank" class="btn btn-outline-dark w-100 py-2">View PDF Notes</a>
+                        <a href="mocktest.html" class="btn btn-danger w-100 mb-3 py-2">Take NTA Mock Test</a>
                     </div>
+
                 </div>
             </div>
         </div>
-    </div>
+    </div> <!-- Closes the protected-content div -->
 
-    <!-- Plyr JS to run the video cloaking -->
-<!-- Plyr JS to run the video cloaking -->
+    <!-- Plyr JS & Playlist Logic -->
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     <script>
+        // Initialize the cloaked video player
         const player = new Plyr('#player');
 
-        // Playlist Logic
+        // Logic to make the playlist buttons change the video
         const videoButtons = document.querySelectorAll('.video-btn');
         const videoFrame = document.getElementById('main-video-frame');
 
         videoButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // 1. Remove active styling from all buttons
+                // Remove red active color from all buttons
                 videoButtons.forEach(btn => btn.classList.remove('active', 'bg-danger', 'text-white'));
-                
-                // 2. Add active styling to the clicked button
+                // Add red active color to clicked button
                 this.classList.add('active', 'bg-danger', 'text-white');
-                
-                // 3. Get the YouTube ID from the clicked button
+                // Get YouTube ID and swap video
                 const videoId = this.getAttribute('data-vid');
-                
-                // 4. Update the iframe source to load the new video securely
                 videoFrame.src = `https://www.youtube.com/embed/${videoId}?origin=https://plyr.io&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1`;
             });
         });
     </script>
 
-    <!-- Firebase Security Logic -->
+    <!-- Single Firebase Security Logic Block -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // TODO: PASTE YOUR FIREBASE CONFIG HERE
-const firebaseConfig = {
-  apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
-  authDomain: "coaching-portal-ugcnet.firebaseapp.com",
-  projectId: "coaching-portal-ugcnet",
-  storageBucket: "coaching-portal-ugcnet.firebasestorage.app",
-  messagingSenderId: "972456665369",
-  appId: "1:972456665369:web:90ec17b9d3d75887ef2588",
-  measurementId: "G-2PEYHGZ6QL"
-};
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        // Security Check: Is the user logged in?
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // VERIFIED: Hide spinner, show content, display email
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('protected-content').style.display = 'block';
-                document.getElementById('user-email').innerText = user.email;
-            } else {
-                // REJECTED: Redirect immediately to login page
-                window.location.href = "index.html";
-            }
-        });
-
-        // Log Out Button Logic
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            });
-        });
-
-<!-- Secure PDF Viewer (MOVED HERE, OUTSIDE THE SCRIPT) -->
-        <div class="card p-4 shadow-sm border-0 mb-4">
-            <h4 class="mb-3">Chapter 1: Geography Notes</h4>
-            <!-- This wrapper cuts off the top 50px of the iframe -->
-            <div style="width: 100%; height: 500px; overflow: hidden; position: relative; border: 1px solid #ddd; border-radius: 5px;">
-                <iframe 
-                    src="https://drive.google.com/drive/folders/1fjV-M1ygBMA_z9obtI93aCfkETSO9jC3?usp=sharing/preview" 
-                    width="100%" 
-                    height="550px" 
-                    style="border: none; position: absolute; top: -50px; left: 0;"
-                    allow="autoplay">
-                </iframe>
-            </div>
-        </div>
-    </div> <!-- Closes the protected-content div -->
-
-    <!-- Plyr JS to run the video cloaking -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script>
-        const player = new Plyr('#player');
-    </script>
-
-    <!-- Firebase Security Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+        // Your Firebase Keys
         const firebaseConfig = {
           apiKey: "AIzaSyDRifIZcxUY_e2rYMhUW8T-q6v9hqB6y0Q",
           authDomain: "coaching-portal-ugcnet.firebaseapp.com",
@@ -196,10 +137,12 @@ const firebaseConfig = {
         // Security Check: Is the user logged in?
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // VERIFIED: Hide spinner, show content, display email
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('protected-content').style.display = 'block';
                 document.getElementById('user-email').innerText = user.email;
             } else {
+                // REJECTED: Redirect immediately to login page
                 window.location.href = "index.html";
             }
         });
