@@ -18,10 +18,31 @@
 </head>
 <body class="bg-light">
 
-    <!-- Loading Spinner -->
-    <div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
-        <div class="spinner-border text-danger" role="status"></div>
-    </div>
+<!-- The Loading Screen -->
+<div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- JavaScript to hide the spinner -->
+<script>
+  // Wait for the window to load, then start the timer
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const loader = document.getElementById('loading-screen');
+      
+      // Option A: Hide it instantly using Bootstrap's display-none class
+      loader.classList.add('d-none');
+      
+      // Option B (Alternative): Smooth fade out if you prefer
+      // loader.style.transition = 'opacity 0.5s ease';
+      // loader.style.opacity = '0';
+      // setTimeout(() => loader.classList.add('d-none'), 500);
+      
+    }, 2000); // 2000 milliseconds = 2 seconds
+  });
+</script>
 
     <!-- Protected Content (Main Menu) -->
     <div id="protected-content">
