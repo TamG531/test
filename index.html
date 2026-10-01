@@ -1,36 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- PWA Manifest & iOS Support -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Coaching App">
-<link rel="apple-touch-icon" href="icon-192.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coaching Portal Login</title>
+    
+    <!-- Bootstrap 5 for modern styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- PWA Manifest & iOS Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Coaching App">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <style>
+        /* Creates a beautiful full-screen gradient background */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Styles the login box */
+        .login-card {
+            border-radius: 15px;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        /* Custom Google Button Styling */
+        .google-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            transition: background-color 0.2s;
+        }
+        .google-btn:hover {
+            background-color: #357ae8;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div style="text-align: center; margin-top: 100px;">
-        <h1>Welcome to the UGC-NET Geography Guidance Session</h1>
-        <h2>By Goutam Elangbam</h2>
-        <p>Please sign in to access your classes and mock tests.</p>
-        
-        <!-- The button your auth.js file is looking for -->
-        <button id="google-login-btn" style="padding: 10px 20px; font-size: 16px;">
-            Sign in with Google
-        </button>
+
+    <div class="container p-3">
+        <div class="card login-card shadow-lg border-0 mx-auto">
+            <div class="card-body p-5 text-center">
+                
+                <!-- Icon (You can swap this emoji for a real logo later via <img> tag) -->
+                <div class="mb-3">
+                    <span class="display-1">🌍</span>
+                </div>
+                
+                <h2 class="fw-bold mb-1">UGC-NET Geography</h2>
+                <h5 class="text-muted mb-4">Guidance Session by <span class="text-primary">Goutam Elangbam</span></h5>
+                
+                <p class="mb-4 text-secondary">Sign in with your registered Google account to access your classes, study materials, and mock tests.</p>
+                
+                <!-- Improved Google Button -->
+                <button id="google-login-btn" class="btn google-btn btn-lg w-100 d-flex align-items-center justify-content-center gap-3 shadow-sm">
+                    <!-- SVG Google Logo -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- This links your HTML to the Firebase logic -->
+    <!-- Firebase Logic -->
     <script type="module" src="./auth.js"></script>
+    
     <!-- PWA Service Worker Registration -->
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker Registered'));
-    }
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
 </body>
 </html>
