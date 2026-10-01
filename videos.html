@@ -17,6 +17,35 @@
 </head>
 <body class="bg-light">
 
+<!-- Mini Loading Container -->
+<div id="loading-screen" class="d-flex justify-content-center align-items-center rounded shadow" 
+     style="width: 100px; height: 100px; background: rgba(255,255,255,0.9); position: fixed; top: 20px; right: 20px; z-index: 9999; transition: opacity 0.5s ease;">
+  
+  <!-- Smaller Bootstrap Spinner using .spinner-border-sm -->
+  <div class="spinner-border spinner-border-sm text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- JavaScript to fade and disappear -->
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const loader = document.getElementById('loading-screen');
+      
+      // Step 1: Smoothly fade it out using CSS transitions
+      loader.style.opacity = '0';
+      
+      // Step 2: Completely remove it from the page layout after it finishes fading
+      setTimeout(() => {
+        loader.classList.add('d-none');
+      }, 500); // Matches the 0.5s transition time
+      
+    }, 2000); // Keeps it visible for 2 seconds
+  });
+</script>
+
+
     <!-- Protected Content -->
     <div id="protected-content">
         <!-- Navigation Bar -->
@@ -56,7 +85,6 @@
                             <button class="list-group-item list-group-item-action video-btn" data-vid="HP15Zr8Ysso">Class 2: Geomorphology</button>
                             <button class="list-group-item list-group-item-action video-btn" data-vid="eDwCFqDvar8">Class 3: Cultural</button>
                             <button class="list-group-item list-group-item-action video-btn" data-vid="xYdMGISwCGc">Class 3: Social</button>
-                            <!-- Add more buttons as needed -->
                         </div>
                     </div>
                 </div>
