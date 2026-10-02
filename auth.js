@@ -1,5 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    onAuthStateChanged, 
+    signOut, 
+    setPersistence, 
+    browserLocalPersistence 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // Your Firebase Config
 const firebaseConfig = {
@@ -26,11 +34,16 @@ if (loginBtn) {
     loginBtn.addEventListener('click', () => {
         loginBtn.innerText = "Verifying..."; // Show loading state
 
-        signInWithPopup(auth, provider)
+        // 1. Force Firebase to remember the user permanently on this device
+        setPersistence(auth, browserLocalPersistence)
+            .then(() => {
+                // 2. Trigger the Google Login Popup
+                return signInWithPopup(auth, provider);
+            })
             .then((result) => {
                 const user = result.user;
                 
-                // Ask Google Sheets if this email is approved
+                // 3. Ask Google Sheets if this email is approved
                 fetch(googleSheetApiUrl + "?email=" + encodeURIComponent(user.email))
                     .then(response => response.json())
                     .then(data => {
