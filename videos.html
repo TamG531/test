@@ -142,6 +142,34 @@
                                 document.getElementById('user-pic').src = user.photoURL;
                                 document.getElementById('user-pic').style.display = 'block';
                             }
+
+                            // 1. PASTE YOUR NEW TRACKING URL HERE
+const trackingApiUrl = "https://script.google.com/macros/s/AKfycbzycUPuvbzVmv6jvZvNHryjG3N2D5MsxCJ_kCPolqJNM1UBKfBVvGu3g5vVEns-oOGO/exec";
+
+// 2. The Tracking Engine
+function trackActivity(user, action, details) {
+    fetch(trackingApiUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+            name: user.displayName || user.email.split('@')[0],
+            email: user.email,
+            action: action,
+            details: details
+        })
+    }).catch(err => console.log("Tracking request skipped"));
+}
+
+// 3. Log that they opened the page
+trackActivity(user, "Page Visit", "Video Lectures");
+
+// 4. Listen for specific video clicks
+const videoBtns = document.querySelectorAll('.video-btn');
+videoBtns.forEach(button => {
+    button.addEventListener('click', function() {
+        // Sends the exact text of the button they clicked (e.g., "Class 1: Geomorphology")
+        trackActivity(user, "Watched Video", this.innerText);
+    });
+});
                         } else {
                             signOut(auth).then(() => { window.location.href = "index.html"; });
                         }
