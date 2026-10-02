@@ -2,32 +2,42 @@
 <html lang="en">
 <head>
     <!-- PWA Manifest & iOS Support -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Coaching App">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Coaching App">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTA Mock Test</title>
+    <title>Mock Test Hub</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-        /* Hide content until Firebase confirms identity */
         #protected-content { display: none; }
-        
-        /* Clean styling for test questions */
-        .question-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 20px; }
-        .form-check-label { cursor: pointer; }
+        .locked-test { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
 <body class="bg-light">
 
-    <!-- Loading Spinner -->
-    <div id="loading-screen" class="vh-100 d-flex justify-content-center align-items-center">
-        <div class="spinner-border text-success" role="status"></div>
+    <!-- Mini Loading Container -->
+    <div id="loading-screen" class="d-flex justify-content-center align-items-center rounded shadow" 
+         style="width: 100px; height: 100px; background: rgba(255,255,255,0.9); position: fixed; top: 20px; right: 20px; z-index: 9999; transition: opacity 0.5s ease;">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
+
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('loading-screen');
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.classList.add('d-none'); }, 500);
+        }, 2000); 
+      });
+    </script>
 
     <!-- Protected Content -->
     <div id="protected-content">
@@ -38,74 +48,72 @@
                 <a href="dashboard.html" class="btn btn-sm btn-outline-light ms-3">← Back to Dashboard</a>
             </div>
             <div class="d-flex align-items-center">
-                <span id="user-email-display" class="text-white me-3"></span>
+                <!-- Beautiful Profile Chip -->
+                <div class="d-flex align-items-center me-3 bg-secondary bg-opacity-50 rounded-pill pe-3 py-1 ps-1 shadow-sm">
+                    <img id="user-pic" src="" alt="Profile" class="rounded-circle me-2" width="28" height="28" style="display: none; object-fit: cover;">
+                    <span id="user-name" class="text-white fw-bold small"></span>
+                </div>
                 <button id="logout-btn" class="btn btn-outline-danger btn-sm">Log Out</button>
             </div>
         </nav>
 
-        <div class="container mt-5 mb-5" style="max-width: 800px;">
-            <h2 class="mb-4">Geography Mock Test 1</h2>
-            
-            <form id="mock-test-form">
-                
-                <!-- Student Details Panel -->
-                <div class="card p-4 mb-4 shadow-sm border-0">
-                    <h5 class="mb-3 text-success">Student Details</h5>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Full Name</label>
-                        <input type="text" class="form-control" id="candidate-name" required placeholder="Enter your full name">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Registered Email (Auto-filled)</label>
-                        <!-- This field is read-only so students cannot submit under another name -->
-                        <input type="email" class="form-control bg-light" id="student-email" readonly>
-                    </div>
-                </div>
-
-                <!-- Questions Panel -->
-                <div class="card p-4 shadow-sm border-0 mb-4">
-                    <h5 class="mb-4 text-success">Test Questions</h5>
-                    
-                    <!-- Question 1 -->
-                    <div class="question-card">
-                        <p class="fw-bold">1. Which of the following is a primary greenhouse gas?</p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="q1" value="Oxygen" required>
-                            <label class="form-check-label">Oxygen</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="q1" value="Carbon Dioxide">
-                            <label class="form-check-label">Carbon Dioxide</label>
-                        </div>
-                    </div>
-
-                    <!-- Question 2 -->
-                    <div class="question-card">
-                        <p class="fw-bold">2. The term "Geomorphology" refers to the study of:</p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="q2" value="Oceans" required>
-                            <label class="form-check-label">Oceans</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="q2" value="Landforms">
-                            <label class="form-check-label">Landforms</label>
-                        </div>
-                    </div>
-                    
-                    <!-- Add more questions here using the same format -->
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm" id="submit-btn">Submit Test & View Score</button>
-            </form>
-
-            <!-- Result Display (Hidden initially) -->
-            <div id="result-display" class="card mt-4 p-4 border-0 shadow-sm bg-success text-white text-center" style="display: none;">
-                <h3 class="mb-3">Test Submitted Successfully!</h3>
-                <h4 id="score-text"></h4>
-                <a href="dashboard.html" class="btn btn-light mt-3">Return to Dashboard</a>
+        <div class="container mt-5 mb-5" style="max-width: 900px;">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-success">Mock Test Series</h2>
+                <p class="text-muted">Select an available test to begin. Tests are timed and can only be submitted once.</p>
             </div>
+            
+            <div class="row g-4">
+                <!-- ACTIVE TEST -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-success h-100">
+                        <div class="card-body p-4">
+                            <span class="badge bg-success mb-2">Available Now</span>
+                            <h4 class="card-title fw-bold">Test 1: Geomorphology</h4>
+                            <ul class="text-muted small mt-3 mb-4">
+                                <li><strong>Format:</strong> NTA UGC NET Style</li>
+                                <li><strong>Questions:</strong> 50</li>
+                                <li><strong>Max Marks:</strong> 100</li>
+                            </ul>
+                            <!-- This will link to our dynamic test engine next -->
+                            <a href="test-engine.html?testId=1" class="btn btn-success w-100 fw-bold">Start Test 1</a>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- LOCKED TEST -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-secondary h-100 bg-light locked-test">
+                        <div class="card-body p-4">
+                            <span class="badge bg-secondary mb-2">Locked</span>
+                            <h4 class="card-title fw-bold text-secondary">Test 2: Climatology</h4>
+                            <ul class="text-muted small mt-3 mb-4">
+                                <li><strong>Format:</strong> NTA UGC NET Style</li>
+                                <li><strong>Questions:</strong> 50</li>
+                                <li><strong>Status:</strong> Opens next Sunday</li>
+                            </ul>
+                            <button class="btn btn-secondary w-100 fw-bold" disabled>Currently Locked</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LOCKED TEST -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-secondary h-100 bg-light locked-test">
+                        <div class="card-body p-4">
+                            <span class="badge bg-secondary mb-2">Locked</span>
+                            <h4 class="card-title fw-bold text-secondary">Test 3: Oceanography</h4>
+                            <ul class="text-muted small mt-3 mb-4">
+                                <li><strong>Format:</strong> NTA UGC NET Style</li>
+                                <li><strong>Questions:</strong> 50</li>
+                                <li><strong>Status:</strong> Coming Soon</li>
+                            </ul>
+                            <button class="btn btn-secondary w-100 fw-bold" disabled>Currently Locked</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -126,31 +134,40 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // TODO: PASTE YOUR *LOGIN* GOOGLE APPS SCRIPT URL HERE
-        const loginDatabaseUrl = "https://script.google.com/macros/s/AKfycbxcq8R_xv6IJNT3m_b_k5iT6oOQzb8g-e2SRO0UZyYUXTTnCxXeyTwtqR1ltYeF3bos/exec";
+        
+        // Your Google Apps Script URLs
+        const googleSheetApiUrl = "https://script.google.com/macros/s/AKfycbxcq8R_xv6IJNT3m_b_k5iT6oOQzb8g-e2SRO0UZyYUXTTnCxXeyTwtqR1ltYeF3bos/exec";
+        const trackingApiUrl = "https://script.google.com/macros/s/AKfycbzycUPuvbzVmv6jvZvNHryjG3N2D5MsxCJ_kCPolqJNM1UBKfBVvGu3g5vVEns-oOGO/exec";
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                fetch(loginDatabaseUrl + "?email=" + encodeURIComponent(user.email))
+                fetch(googleSheetApiUrl + "?email=" + encodeURIComponent(user.email))
                     .then(response => response.json())
                     .then(data => {
                         if (data.approved) {
-                            document.getElementById('loading-screen').style.display = 'none';
                             document.getElementById('protected-content').style.display = 'block';
                             
-                            // Displays email in Navbar
-                            document.getElementById('user-email-display').innerText = user.email;
-                            
-                            // CRITICAL: Auto-fills the hidden test form with their verified email
-                            document.getElementById('student-email').value = user.email;
+                            // Map Google Profile Data
+                            document.getElementById('user-name').innerText = user.displayName || user.email.split('@')[0];
+                            if (user.photoURL) {
+                                document.getElementById('user-pic').src = user.photoURL;
+                                document.getElementById('user-pic').style.display = 'block';
+                            }
+
+                            // The Tracking Engine
+                            fetch(trackingApiUrl, {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    name: user.displayName || user.email.split('@')[0],
+                                    email: user.email,
+                                    action: "Page Visit",
+                                    details: "Mock Test Hub"
+                                })
+                            }).catch(err => console.log("Tracking request skipped"));
+
                         } else {
                             signOut(auth).then(() => { window.location.href = "index.html"; });
                         }
-                    })
-                    .catch(err => {
-                        console.error("Database check failed:", err);
-                        alert("Error verifying your account status.");
                     });
             } else {
                 window.location.href = "index.html";
@@ -162,13 +179,11 @@
         });
     </script>
     
-    <!-- SUBMISSION LOGIC WILL GO HERE -->
-<!-- PWA Service Worker Registration -->
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker Registered'));
-    }
-</script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
