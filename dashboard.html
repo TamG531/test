@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <!-- PWA Manifest & iOS Support -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Coaching App">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Coaching App">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
@@ -24,33 +25,33 @@
 </head>
 <body class="bg-light">
 
-<!-- Mini Loading Container -->
-<div id="loading-screen" class="d-flex justify-content-center align-items-center rounded shadow" 
-     style="width: 100px; height: 100px; background: rgba(255,255,255,0.9); position: fixed; top: 20px; right: 20px; z-index: 9999; transition: opacity 0.5s ease;">
-  
-  <!-- Smaller Bootstrap Spinner using .spinner-border-sm -->
-  <div class="spinner-border spinner-border-sm text-primary" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>
-</div>
+    <!-- Mini Loading Container -->
+    <div id="loading-screen" class="d-flex justify-content-center align-items-center rounded shadow" 
+         style="width: 100px; height: 100px; background: rgba(255,255,255,0.9); position: fixed; top: 20px; right: 20px; z-index: 9999; transition: opacity 0.5s ease;">
+      
+      <!-- Smaller Bootstrap Spinner using .spinner-border-sm -->
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
 
-<!-- JavaScript to fade and disappear -->
-<script>
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      const loader = document.getElementById('loading-screen');
-      
-      // Step 1: Smoothly fade it out using CSS transitions
-      loader.style.opacity = '0';
-      
-      // Step 2: Completely remove it from the page layout after it finishes fading
-      setTimeout(() => {
-        loader.classList.add('d-none');
-      }, 500); // Matches the 0.5s transition time
-      
-    }, 2000); // Keeps it visible for 2 seconds
-  });
-</script>
+    <!-- JavaScript to fade and disappear -->
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('loading-screen');
+          
+          // Step 1: Smoothly fade it out using CSS transitions
+          loader.style.opacity = '0';
+          
+          // Step 2: Completely remove it from the page layout after it finishes fading
+          setTimeout(() => {
+            loader.classList.add('d-none');
+          }, 500); // Matches the 0.5s transition time
+          
+        }, 2000); // Keeps it visible for 2 seconds
+      });
+    </script>
 
     <!-- Protected Content (Main Menu) -->
     <div id="protected-content">
@@ -58,7 +59,13 @@
         <nav class="navbar navbar-dark bg-dark px-4 shadow-sm">
             <a class="navbar-brand" href="#">Coaching Portal</a>
             <div class="d-flex align-items-center">
-                <span id="user-email" class="text-white me-3"></span>
+                
+                <!-- NEW: Beautiful Profile Chip -->
+                <div class="d-flex align-items-center me-3 bg-secondary bg-opacity-50 rounded-pill pe-3 py-1 ps-1 shadow-sm">
+                    <img id="user-pic" src="" alt="Profile" class="rounded-circle me-2" width="28" height="28" style="display: none; object-fit: cover;">
+                    <span id="user-name" class="text-white fw-bold small"></span>
+                </div>
+
                 <button id="logout-btn" class="btn btn-outline-light btn-sm">Log Out</button>
             </div>
         </nav>
@@ -133,7 +140,14 @@
                             // VERIFIED: Hide spinner, show content
                             document.getElementById('loading-screen').style.display = 'none';
                             document.getElementById('protected-content').style.display = 'block';
-                            document.getElementById('user-email').innerText = user.email;
+                            
+                            // NEW: Map Google Profile Data to the UI
+                            document.getElementById('user-name').innerText = user.displayName || user.email.split('@')[0];
+                            if (user.photoURL) {
+                                document.getElementById('user-pic').src = user.photoURL;
+                                document.getElementById('user-pic').style.display = 'block';
+                            }
+                            
                         } else {
                             // REJECTED: Email was removed from sheet. Force sign out.
                             signOut(auth).then(() => {
@@ -158,12 +172,13 @@
             });
         });
     </script>
+    
     <!-- PWA Service Worker Registration -->
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker Registered'));
-    }
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
 </body>
 </html>
